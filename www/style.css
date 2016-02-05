@@ -1,0 +1,60 @@
+div .form-group .shiny-input-container { 
+	display: inline-flex;
+	/*background-color: blue*/
+}
+
+.statlabel {
+	
+	font-weight: bold;
+	font-size: 16pt;
+	
+}
+
+.statistic { 
+	font-size: 14pt;
+}
+
+#errormessage {
+color: #CE2029;
+	font-weight: bold;
+
+}
+
+#model.summary {
+text-rendering: optimizeLegibility;
+}
+
+.formula {
+	font-size: 14pt;
+	padding: 14pt;
+	display: block;
+	text-align: center;
+}
+
+.avoidwrap { 
+	display: inline-block; 
+}
+
+table {
+	text-align: center;
+	margin: auto;
+}
+
+.axis-label {
+	display: inline-block;
+	font-weight: bold;
+	font-size: 16pt;
+}
+
+#y-label {
+transform: rotate(90deg) translateX(3vh);
+transform-origin: left;
+}
+
+#y-label-container {
+transform-origin: center;
+transform: rotate(180deg)
+}
+#x-label {
+transform: translateX(5vw)
+}
