@@ -4,6 +4,8 @@ if( !require(ggvis) ) install.packages("ggvis")
 require(ggvis)
 if( !require(magrittr) ) install.packages("magrittr")
 require(magrittr)
+if( !require(DT) ) install.packages("DT")
+require(DT)
 
 
 ### Loads initial dataset ###

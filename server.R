@@ -1,6 +1,4 @@
 
-### TO DO: IMPORTING DATA AFTER DELETING COLUMNS CRASHES THE APP
-
 # Adjust max file upload size if necessary: default is 5MB
 # megabytes <- 5
 # options(shiny.maxRequestSize=megabytes*1024^2)
