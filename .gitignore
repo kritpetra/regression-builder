@@ -48,6 +48,9 @@ Temporary Items
 
 # Project file
 *.Rproj
+*.Rproj.user/
+*.Rdata
+.Rhistory
 
 # shinyapps
 rsconnect/

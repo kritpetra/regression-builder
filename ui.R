@@ -23,15 +23,21 @@ shinyUI(
 						 								choices = initialNumericVariables, selected = "Budget"),
 						 		
 						 		### List of controls ###
-						 		checkboxGroupInput("controls", "Control variables",
-						 											 choices = initialNumericVariables,
-						 											 inline = TRUE),
+						 		span("Control variables", class="control-label"),
+						 		tags$div(class = 'multicol',
+							 		checkboxGroupInput("controls", "",
+							 											 choices = initialNumericVariables,
+							 											 inline = FALSE)
+						 		), br(),
 						 		
 						 		### List of all variables ###
-						 		checkboxGroupInput("tooltip_vars", "Tooltip information",
-						 											 choices = initialVariables,
-						 											 selected = previousInputVars,
-						 											 inline = TRUE)
+						 		span("Information displayed in tooltip", class="control-label"),
+						 		tags$div(class = 'multicol',
+							 		checkboxGroupInput("tooltip_vars", "Tooltip information",
+							 											 choices = initialVariables,
+							 											 selected = previousInputVars,
+							 											 inline = FALSE)
+						 		)
 						 	),
 						 	
 						 	# Show a plot of the generated distribution

@@ -1,7 +1,8 @@
 
-# Adjust max file upload size if necessary: default is 5MB
-# megabytes <- 5
-# options(shiny.maxRequestSize=megabytes*1024^2)
+
+# Adjust max file upload size if necessary: default is 30MB
+megabytes <- 30
+options(shiny.maxRequestSize=megabytes*1024^2)
 
 shinyServer(function(input, output, session) {
 	

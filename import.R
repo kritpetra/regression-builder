@@ -113,11 +113,9 @@ observeEvent(input$commitdataset, {
 											choices = numericVariables(), 
 											selected = numericVariables()[2])
 		updateCheckboxGroupInput(session, "controls",
-														 choices = numericVariables()[-2] ,
-														 inline = TRUE)
+														 choices = numericVariables()[-2])
 		updateCheckboxGroupInput(session, "tooltip_vars",
-														 choices = datasetVariables(),
-														 inline = TRUE)
+														 choices = datasetVariables())
 		
 		updateTabsetPanel(session, "navbar", selected = "plot")
 	}

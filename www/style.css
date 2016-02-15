@@ -47,14 +47,34 @@ table {
 }
 
 #y-label {
-transform: rotate(90deg) translateX(3vh);
-transform-origin: left;
+	transform: rotate(90deg) translateX(3vh);
+	transform-origin: left;
 }
 
 #y-label-container {
-transform-origin: center;
-transform: rotate(180deg)
+	transform-origin: center;
+	transform: rotate(180deg)
 }
+
 #x-label {
-transform: translateX(5vw)
+	transform: translateX(5vw)
 }
+
+label[for="controls"] {
+	display:none;
+}
+label[for="tooltip_vars"]{
+	display:none;
+}
+span.control-label {
+	font-weight:bold;
+}
+
+.multicol {
+	align:left;
+	-webkit-column-count: 2; /* Chrome, Safari, Opera */ 
+	-moz-column-count: 2;    /* Firefox */ 
+	column-count: 2; 
+	-moz-column-fill: auto;
+	-column-fill: auto;
+} 
