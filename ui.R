@@ -40,7 +40,7 @@ shinyUI(
 						 		)
 						 	),
 						 	
-						 	# Show a plot of the generated distribution
+						 	# Show the generated scatterplot
 						 	mainPanel(
 						 		htmlOutput("y_label"),
 						 		ggvisOutput("ggvis_plot"),
@@ -58,51 +58,47 @@ shinyUI(
 						 )
 		),
 		
-		tabPanel("Import Dataset", value = "import",
+		tabPanel("Change Dataset", value = "import",
 						 sidebarLayout(
 						 	# Input in sidepanel:
 						 	sidebarPanel(
 						 		
-						 		# Upload data:
-						 		fileInput("file", "Upload data-file:"),
-						 		# 						 		
-						 								 		
-						 		# 						 		
-						 		# 						 		selectInput("dec", "Decimal",
-						 		# 						 								choices = c("Period" = ".", "Comma" = ","),
-						 		# 						 								selected = "."),
-						 		# 						 		
-						 		# 						 		selectInput("quote", "Quote",
-						 		# 						 								choices = c('Double Quote (\")' = '\"',
-						 		# 						 														"Single Quote (')" = "'"),
-						 		# 						 								selected = '\"'),
-						 		# 						 		
-						 		
-						 		
-						 		
-						 		
-						 		htmlOutput("specifications"),
-						 		
-						 		# Specific CSV attributes
-						 		actionLink("additionalspec", "Specify additional file parameters"),
-						 		conditionalPanel(condition = "input.additionalspec %2 == 1" ,
-						 										 selectInput("sep", "Field separator:", 
-						 										 						choices = c("Whitespace" = "",
-						 										 												"Comma" = ",",
-						 										 												"Semicolon" = ";"),
-						 										 						selected = ","),
-						 										 textInput("na.strings", "Missing values coded as:", value = "NA")
-						 										 
-						 										 ),
-						 										 
-						 										 # Variable selection:
-						 		htmlOutput("varselect"),
-						 		
-						 		# ID column
-						 		htmlOutput("idselect"),
-						 		
-						 		htmlOutput("errormessage", class = "shiny-output-error"),
-						 		
+                # Select other dataset
+                 h4("Select a dataset"),
+                 
+                 radioButtons("defaultdatasets", label = NULL, 
+                              choices = c("Movies" = "movies",
+                                          "Housing" = "housing",
+                                          "Baseball" = "baseball",
+                                          "Upload your own dataset" = "upload")),
+                 
+                 conditionalPanel(condition = "input.defaultdatasets === 'upload'",
+                                  
+  						 		# Upload data:
+  						 		fileInput("file", "Upload data-file:"),	
+  						 		
+  						 		htmlOutput("specifications"),
+  						 		
+  						 		# Specific CSV attributes
+  						 		actionLink("additionalspec", "Specify additional file parameters"),
+  						 		conditionalPanel(condition = "input.additionalspec %2 == 1" ,
+  						 										 selectInput("sep", "Field separator:", 
+  						 										 						choices = c("Whitespace" = "",
+  						 										 												"Comma" = ",",
+  						 										 												"Semicolon" = ";"),
+  						 										 						selected = ","),
+  						 										 textInput("na.strings", "Missing values coded as:", value = "NA")
+  						 										 
+  						 										 ),
+  						 										 
+  						 										 # Variable selection:
+  						 		htmlOutput("varselect"),
+  						 		
+  						 		# ID column
+  						 		htmlOutput("idselect"),
+  						 		
+  						 		htmlOutput("errormessage", class = "shiny-output-error")
+                 ),
 						 		# Commit dataset
 						 		actionButton("commitdataset", "Use this dataset")
 						 		

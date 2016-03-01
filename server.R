@@ -44,8 +44,16 @@ shinyServer(function(input, output, session) {
 		
 		if (!input$commitdataset) {
 			initialIdColumn
-		} else if (input$identifier == "None") {
-			paste(rep("Row", nrow(uploadedDataset())), seq(1,nrow(uploadedDataset())))
+		} else if (input$defaultdatasets != "upload"){
+      column <- switch(input$defaultdatasets,
+                       movies = "Movie",
+                       housing = "Address",
+                       baseball = "Name")
+      isolate(uploadedDataset()[, column])
+      
+    } else if (input$identifier == "None") {
+			paste(rep("Obs", nrow(uploadedDataset())), seq(1,nrow(uploadedDataset())))
+      
 		} else {
 			isolate(uploadedDataset()[, input$identifier ])
 		}
@@ -56,6 +64,8 @@ shinyServer(function(input, output, session) {
 		
 		if (!input$commitdataset) {
 			initialDataset
+		} else if (input$defaultdatasets != "uploaded"){
+		  isolate(uploadedDataset())
 		} else {
 			isolate(uploadedDataset()[, input$vars ])
 		}
@@ -66,6 +76,8 @@ shinyServer(function(input, output, session) {
 		
 		if (!input$commitdataset) {
 			initialVariables
+		} else if (input$defaultdatasets != "uploaded"){
+		  isolate(colnames(uploadedDataset()))
 		} else {
 			isolate(input$vars)
 		}
@@ -75,6 +87,9 @@ shinyServer(function(input, output, session) {
 	numericVariables <- reactive({
 		if (!input$commitdataset) {
 			initialNumericVariables
+		} else if (input$defaultdatasets != "uploaded"){
+		  isolate(colnames(uploadedDataset())[sapply(uploadedDataset(), class) == "numeric" |
+		                      sapply(uploadedDataset(), class) == "integer"])
 		} else {
 			isolate(input$vars[ sapply(uploadedDataset()[,input$vars], class) == "numeric" |
 														sapply(uploadedDataset()[,input$vars], class) == "integer"])
@@ -191,7 +206,7 @@ shinyServer(function(input, output, session) {
 			ifelse( as.numeric(.) < 0.0001, "< 0.0001", . )
 		
 		# Find adjusted r-squared of model: how well does the model fit our data?
-		r.squared <- currentModel() %>% summary %>% extract2("adj.r.squared") %>%
+		r.squared <- currentModel() %>% summary %>% extract2("r.squared") %>%
 			format(digits = 4) %>%
 			ifelse( (as.numeric(.)) < 0.0001, "< 0.0001", . )
 		
@@ -210,7 +225,7 @@ shinyServer(function(input, output, session) {
 						<p class='statlabel'>p-value</p> 
 						<p class='statistic'> %s </p></span></td>
 						<td><span class='rsq'>
-						<p class='statlabel'>adjusted r<sup>2</sup></p> 
+						<p class='statlabel'>r<sup>2</sup> value</p> 
 						<p class='statistic'> %s </p></span></td></tr></table>", 
 						formula, p.value, r.squared)
 		
@@ -264,7 +279,7 @@ shinyServer(function(input, output, session) {
 												setdiff(removed.input) %>% 
 												union(added.input)
 		) 
-		# WONT UPDATE WHEN INPUT$CONTROLS BECOMES NULL
+		# WONT UPDATE WHEN INPUT$CONTROLS BECOMES NULL: bug in shiny??
 		
 		previousInputVars <<- selected.inputs
 		

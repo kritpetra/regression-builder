@@ -7,24 +7,39 @@ output$specifications <- renderText({
 
 ### Import data file:
 uploadedDataset <- reactive({
-	if (is.null(input$file)) { # User has not uploaded a file yet
-		return(data.frame())
-	}
-	
-	file.extension <- substr(input$file$name, 
-													 nchar(input$file$name)-3, nchar(input$file$name))
-	
-	validate(
-		need( file.extension == ".csv",
-					message = "Dataset must be in a .csv format.")
-	)
-	
-	if ( file.extension == ".csv") {
-		read.csv(input$file$datapath,
-						 stringsAsFactors = FALSE,
-						 header = TRUE,
-						 sep = input$sep,
-						 na.strings = input$na.strings %>% strsplit(", ") %>% unlist)
+  if (input$defaultdatasets == "movies") {
+    read.csv("movies.csv", 
+             stringsAsFactors = FALSE, 
+             header = TRUE)
+    
+	} else if (input$defaultdatasets == "housing") {
+	  read.csv("NorthamptonHousing.csv", 
+	           stringsAsFactors = FALSE, 
+	           header = TRUE)
+    
+	} else if (input$defaultdatasets == "baseball") {
+	  read.csv("baseball.csv", 
+	           stringsAsFactors = FALSE, 
+	           header = TRUE)
+    
+	} else if (is.null(input$file)) { # User has not uploaded a file yet
+	  return(data.frame())
+	  
+	} else {
+  	file.extension <- substr(input$file$name, 
+  													 nchar(input$file$name)-3, nchar(input$file$name))
+  	validate(
+  		need( file.extension == ".csv",
+  					message = "Dataset must be in a .csv format.")
+  	)
+  	
+  	if ( file.extension == ".csv") {
+  		read.csv(input$file$datapath,
+  						 stringsAsFactors = FALSE,
+  						 header = TRUE,
+  						 sep = input$sep,
+  						 na.strings = input$na.strings %>% strsplit(", ") %>% unlist)
+  	}
 	}
 })
 
@@ -75,11 +90,14 @@ output$idselect <- renderUI({
 # Render 
 # Display table of dataset which will be used in the regression:
 output$table <- renderDataTable({
-	if (is.null(input$vars) || length(input$vars)==0) {
-		return(NULL)
+  
+  if (input$defaultdatasets != "upload") {
+    return(uploadedDataset())
+  }
+	else if (!is.null(input$vars) && !length(input$vars)==0) {
+	  return(uploadedDataset()[,input$vars])
 	}
-	
-	return((uploadedDataset()[,input$vars]))	
+
 }, options = list(pageLength = 10))
 
 # Renders error message to be displayed when there is a problem with the dataset
@@ -100,23 +118,83 @@ output$errormessage <- renderText({
 
 # When user clicks "Use this dataset" button,
 observeEvent(input$commitdataset, {
-	
-	# checks if the selected dataset is not empty, the identifiers are unique, and
-	# there are at least two numeric columns. If they are, updates the UI.
-	if( !identical( uploadedDataset(), data.frame()) && 
-			!any( uploadedDataset()[[input$identifier]] %>% duplicated ) &&
-			sum( sapply( uploadedDataset()[,input$vars], is.numeric)) > 1) {
+  
+  numericVars <- colnames(uploadedDataset())[sapply(uploadedDataset(), class) == "numeric" |
+                                               sapply(uploadedDataset(), class) == "integer"]
+  
+  ######### Code needs MAJOR CLEANUP #########!!!!!!!!!!!!!!
+  if(input$defaultdatasets != "upload"){
+    
+    if(input$defaultdatasets == "movies") {
+      updateSelectInput(session, "response",
+                        choices = numericVars,
+                        selected = "RottenTomatoesScore")
+      updateSelectInput(session, "predictor",
+                        choices = numericVars, 
+                        selected = "Budget")
+      updateCheckboxGroupInput(session, "controls",
+                               choices = numericVars[-2])
+      updateCheckboxGroupInput(session, "tooltip_vars",
+                               choices = colnames(uploadedDataset()))
+      updateTabsetPanel(session, "navbar", selected = "plot")
+      
+    }
+    
+    else if(input$defaultdatasets == "housing") {
+      updateSelectInput(session, "response",
+                        choices = numericVars,
+                        selected = "Est1998Price")
+      updateSelectInput(session, "predictor",
+                        choices = numericVars, 
+                        selected = "InteriorInSqFt")
+      updateCheckboxGroupInput(session, "controls",
+                               choices = numericVars[-2])
+      updateCheckboxGroupInput(session, "tooltip_vars",
+                               choices = colnames(uploadedDataset()))
+      updateTabsetPanel(session, "navbar", selected = "plot")
+      
+    }
+    
+    else if(input$defaultdatasets == "baseball") {
+      updateSelectInput(session, "response",
+                        choices = numericVars,
+                        selected = "Salary")
+      updateSelectInput(session, "predictor",
+                        choices = numericVars, 
+                        selected = "Runs")
+      updateCheckboxGroupInput(session, "controls",
+                               choices = numericVars[-2])
+      updateCheckboxGroupInput(session, "tooltip_vars",
+                               choices = colnames(uploadedDataset()))
+      
+      updateTabsetPanel(session, "navbar", selected = "plot")
+      
+    }
+    
+  } else {
+    
+    # checks if the selected dataset is not empty, the identifiers are unique, and
+    # there are at least two numeric columns. If they are, updates the UI.
+    if( !identical( uploadedDataset(), data.frame()) && 
+          !any( uploadedDataset()[[input$identifier]] %>% duplicated ) &&
+          sum( sapply( uploadedDataset()[,input$vars], is.numeric)) > 1) {
+      
+      updateSelectInput(session, "response",
+                        choices = input$vars[ sapply(uploadedDataset()[,input$vars], class) == "numeric" |
+                                                sapply(uploadedDataset()[,input$vars], class) == "integer"])
+      updateSelectInput(session, "predictor",
+                        choices = input$vars[ sapply(uploadedDataset()[,input$vars], class) == "numeric" |
+                                                sapply(uploadedDataset()[,input$vars], class) == "integer"], 
+                        selected = input$vars[ sapply(uploadedDataset()[,input$vars], class) == "numeric" |
+                                                 sapply(uploadedDataset()[,input$vars], class) == "integer"][2])
+      updateCheckboxGroupInput(session, "controls",
+                               choices = input$vars[ sapply(uploadedDataset()[,input$vars], class) == "numeric" |
+                                                       sapply(uploadedDataset()[,input$vars], class) == "integer"][-2])
+      updateCheckboxGroupInput(session, "tooltip_vars",
+                               choices = input$vars)
+      
+      updateTabsetPanel(session, "navbar", selected = "plot")
+    }
+  }
+  })
 
-		updateSelectInput(session, "response",
-											choices = numericVariables())
-		updateSelectInput(session, "predictor",
-											choices = numericVariables(), 
-											selected = numericVariables()[2])
-		updateCheckboxGroupInput(session, "controls",
-														 choices = numericVariables()[-2])
-		updateCheckboxGroupInput(session, "tooltip_vars",
-														 choices = datasetVariables())
-		
-		updateTabsetPanel(session, "navbar", selected = "plot")
-	}
-})
